@@ -1481,4 +1481,22 @@ mod test {
         assert_eq!(a_span, Some(&Span::new(8, 9)));
         assert_eq!(foo_span, Some(&Span::new(14, 17)));
     }
+
+    #[test]
+    fn token_span_issue296() {
+        let src = "%%
+                   S: | AB;
+                   A: 'a' 'b';
+                   B: 'b' 'c';
+                   AB: A AB | B ';' AB;
+                   %%
+                   ";
+        let grm =
+            YaccGrammar::new(YaccKind::Original(YaccOriginalActionKind::NoAction), src).unwrap();
+        let token_map = grm.tokens_map();
+        let c_tidx = token_map.get("c").unwrap();
+        assert_eq!(grm.token_name(*c_tidx), Some("c"));
+        let c_span = grm.token_span(*c_tidx).unwrap();
+        assert_eq!(&src[c_span.start()..c_span.end()], "c");
+    }
 }
