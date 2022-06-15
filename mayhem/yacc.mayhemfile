@@ -1,0 +1,7 @@
+project: grmtools
+target: yacc
+
+cmds:
+  - cmd: /yacc
+  - cmd: /yacc_no_inst @@
+    libfuzzer: false
